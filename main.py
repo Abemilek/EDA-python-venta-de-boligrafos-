@@ -1,28 +1,48 @@
+#%%
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Leer el archivo Excel
-df = pd.read_excel("Data/Pen Sales Data.xlsx")
 
-# Convertir la columna 'Purchase Date' a formato datetime
-df['Purchase Date'] = pd.to_datetime(df['Purchase Date'])
+file_path = "./Pen Sales Data.xlsx"
+df_pen_sales = pd.read_excel(file_path, sheet_name="Pen Sales")
 
-# Crear una nueva columna con año y mes
-df['Year-Month'] = df['Purchase Date'].dt.to_period('M')
+df_pen_sales["Item"] = df_pen_sales["Item"].str.strip()
 
-# Contar el número de ventas por mes
-ventas_por_mes = df.groupby('Year-Month').size()
+df_avg_pen_costs = df_pen_sales.groupby("Item")["Shipping Cost"].mean().sort_values()
 
-# Convertir el índice a string para graficar bien
-ventas_por_mes.index = ventas_por_mes.index.astype(str)
+print(df_pen_sales.dtypes)
+print(df_avg_pen_costs)
 
-# Graficar
 plt.figure(figsize=(10, 5))
-plt.plot(ventas_por_mes.index, ventas_por_mes.values, marker='o', color='teal')
-plt.title("Ventas de bolígrafos por mes")
-plt.xlabel("Mes")
-plt.ylabel("Número de ventas")
-plt.xticks(rotation=45)
-plt.grid(True)
+df_avg_pen_costs.plot(kind="barh", color="green")
+plt.title("Costo de envío promedio por producto")
+plt.xlabel("Costo medio de envío")
+plt.ylabel("Tipo de producto")
 plt.tight_layout()
 plt.show()
+
+#%%
+#randink de boligrafos
+#%%
+conteo_de_productos = df_pen_sales["Item"].value_counts()
+#%%
+print(conteo_de_productos)
+#%%
+plt.figure(figsize=(10,5))
+conteo_de_productos.plot(kind="barh", color="green")
+plt.title("randink de popularidad de productos")
+plt.xlabel("cantidad de ventas")
+plt.ylabel("tipo de producto")
+plt.gca().invert_yaxis()
+plt.show()
+#%%
+
+#%%
+#analisis de tiempo de entrega
+#%%
+print (df_pen_sales["Delivery Date"])
+#%%
+tiempo_de_entrega = (df_pen_sales["Delivery Date"] - df_pen_sales["Purchase Date"])
+#%%
+print (tiempo_de_entrega )
+#%%
